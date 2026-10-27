@@ -21,22 +21,80 @@ public class Agenda {
             System.out.println("Contacto agregado: " + c.getNombre());
         }
     }
+
     public Contacto buscarContacto(String nombre) {
         return contactos.get(nombre);
     }
-
 
     public boolean eliminarContacto(String nombre) {
         if (!contactos.containsKey(nombre)) {
             return false;
         }
-        //Vamos a eliminar del mapa, del historial y de los grupos:
+//Vamos a eliminar del mapa, del historial y de los grupos:
         contactos.remove(nombre);
         historial.removeIf(contacto -> contacto.getNombre().equals(nombre));
         for (Set<String> nombresContactos : contactosPorGrupo.values()) {
             nombresContactos.remove(nombre);
         }
         return true;
+    }
+
+    public void listarContactos() {
+        for (Contacto contacto : contactos.values()) {
+            System.out.println(contacto);
+        }
+    }
+
+    public void listarHistorial() {
+        for (Contacto contacto : historial) {
+            System.out.println(contacto);
+        }
+    }
+
+    public void agregarGrupo(String nombreGrupo) {
+        if (grupos.contains(nombreGrupo)) {
+            System.out.println("Error: El grupo '" + nombreGrupo + "' ya existe");
+        } else {
+            grupos.add(nombreGrupo);
+            contactosPorGrupo.put(nombreGrupo, new TreeSet<>());
+            System.out.println("Grupo '" + nombreGrupo + "' creado");
+        }
+    }
+
+    public void agregarContactoAGrupo(String nombreContacto, String nombreGrupo) {
+        if (!contactos.containsKey(nombreContacto)) {
+            System.out.println("Error: El contacto '" + nombreContacto + "' no existe");
+            return;
+        }
+        if (!grupos.contains(nombreGrupo)) {
+            System.out.println("Error: El grupo '" + nombreGrupo + "' no existe");
+            return;
+        }
+        contactosPorGrupo.get(nombreGrupo).add(nombreContacto);
+        System.out.println("Contacto agregado al grupo '" + nombreGrupo + "'");
+    }
+
+    public void listarGrupos() {
+        for (String nombreGrupo : grupos) {
+            System.out.println(nombreGrupo);
+        }
+    }
+
+    public void mostrarContactosPorGrupo(String nombreGrupo) {
+        if (!grupos.contains(nombreGrupo)) {
+            System.out.println("Error: El grupo '" + nombreGrupo + "' no existe");
+            return;
+        }
+        Set<String> nombresContactos = contactosPorGrupo.get(nombreGrupo);
+
+        if (nombresContactos.isEmpty()) {
+            System.out.println("El grupo '" + nombreGrupo + "' no tiene contactos");
+            return;
+        }
+        System.out.println("Contactos en '" + nombreGrupo + "':");
+        for (String nombreContacto : nombresContactos) {
+            System.out.println("- " + contactos.get(nombreContacto));
+        }
     }
 
 }
